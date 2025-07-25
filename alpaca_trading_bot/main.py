@@ -7,17 +7,24 @@ if __name__ == "__main__":
     strategy = BreakoutStrategy(symbol=SYMBOL, interval=INTERVAL)
     trader = AlpacaTrader()
 
-    print("🚀 自动交易系统启动...")
+    print("🚀 Trading bot is starting...")
 
     while True:
         try:
+            print("🔍 Checking for trading signal...")
             signal = strategy.check_signal()
+            print(f"📡 Signal received: {signal}")
+
             if signal == "buy":
+                print("🟢 Executing buy order")
                 trader.buy(SYMBOL)
             elif signal == "sell":
+                print("🔴 Executing sell order")
                 trader.sell(SYMBOL)
             else:
-                print("等待信号中...")
+                print("⏳ No valid signal. Waiting...")
+
         except Exception as e:
-            print(f"❌ 错误: {e}")
-        time.sleep(60)
+            print(f"❌ Error: {e}")
+
+        time.sleep(60) 
