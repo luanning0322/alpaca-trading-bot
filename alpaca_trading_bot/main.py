@@ -29,5 +29,8 @@ if __name__ == "__main__":
             time.sleep(INTERVAL * 60)
 
         except Exception as e:
-            print(f"❌ Error: {e}")
-            time.sleep(60)
+    import traceback
+    traceback.print_exc()
+    print(f"❌ Error: {e}")
+    time.sleep(60)
+
