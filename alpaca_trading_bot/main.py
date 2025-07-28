@@ -1,43 +1,30 @@
 import time
-
-# 模拟策略类（始终返回“buy”）
-class MockStrategy:
-    def check_signal(self):
-        return "buy"
-
-# 模拟交易执行器（打印日志代替真实下单）
-class MockTrader:
-    def buy(self, symbol):
-        print(f"✅ [Mock BUY] Executed buy order for {symbol}")
-
-    def sell(self, symbol):
-        print(f"✅ [Mock SELL] Executed sell order for {symbol}")
-
-# 设定符号与时间间隔
-SYMBOL = "AAPL"
-INTERVAL = 1  # 单位分钟，测试用可忽略
+from strategy import BreakoutStrategy
+from trader import AlpacaTrader
+from config import SYMBOL, INTERVAL
 
 if __name__ == "__main__":
-    strategy = MockStrategy()
-    trader = MockTrader()
+    strategy = BreakoutStrategy(symbol=SYMBOL, interval=INTERVAL)
+    trader = AlpacaTrader()
 
-    print("🚀 Mock trading bot is starting...")
+    print("🚀 Real trading bot is starting...")
 
     while True:
         try:
             print("🔍 Checking for trading signal...")
             signal = strategy.check_signal()
-            print(f"📡 Signal received: {signal}")
+            print(f"📉 Signal received: {signal}")
 
             if signal == "buy":
-                print("🟢 Executing mock buy order")
+                print("🟢 Executing real buy order")
                 trader.buy(SYMBOL)
             elif signal == "sell":
-                print("🔴 Executing mock sell order")
+                print("🔴 Executing real sell order")
                 trader.sell(SYMBOL)
             else:
-                print("⏳ No valid signal. Waiting...")
+                print("⏸ No valid signal. Waiting...")
+
         except Exception as e:
             print(f"❌ Error: {e}")
-        
-        time.sleep(10)  # 每 60 秒循环一次
+
+        time.sleep(60)  # 每60秒循环一次
