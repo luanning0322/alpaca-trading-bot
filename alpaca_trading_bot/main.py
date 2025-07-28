@@ -1,7 +1,7 @@
 import time
 from moving_average_strategy import MovingAverageStrategy
 from trader import AlpacaTrader
-from config import SYMBOL, INTERVAL
+from config import SYMBOL, INTERVAL, SLEEP_INTERVAL
 
 if __name__ == "__main__":
     strategy = MovingAverageStrategy(short_window=5, long_window=20)
@@ -25,10 +25,8 @@ if __name__ == "__main__":
             else:
                 print("⏸️ No valid signal. Waiting...")
 
-            time.sleep(INTERVAL * 60)  # 每 INTERVAL 分钟运行一次
+            time.sleep(SLEEP_INTERVAL)  # 使用整数秒数等待
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
             print(f"❌ Error: {e}")
-            time.sleep(60)  # 错误后等待1分钟再尝试
+            time.sleep(60)
