@@ -25,8 +25,8 @@ if __name__ == "__main__":
             else:
                 print("⏸️ No valid signal. Waiting...")
 
-            time.sleep(INTERVAL * 60)  # 每 INTERVAL 分钟运行一次
+            time.sleep(INTERVAL * 60)
 
         except Exception as e:
             print(f"❌ Error: {e}")
-            time.sleep(60)  # 错误后等待1分钟再尝试
+            time.sleep(60)
