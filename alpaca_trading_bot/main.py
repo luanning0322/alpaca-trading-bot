@@ -12,6 +12,7 @@ if __name__ == "__main__":
     while True:
         try:
             print("✅ Loop is running...")
+            print("📊 Strategy initialized, starting check_signal...")
             print("🔍 Checking for trading signal...")
             signal = strategy.check_signal()
             print(f"📈 Signal received: {signal}")
