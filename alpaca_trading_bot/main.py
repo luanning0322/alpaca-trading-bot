@@ -12,7 +12,6 @@ if __name__ == "__main__":
     while True:
         try:
             print("✅ Loop is running...")
-            print("📊 Strategy initialized, starting check_signal...")
             print("🔍 Checking for trading signal...")
             signal = strategy.check_signal()
             print(f"📈 Signal received: {signal}")
@@ -26,13 +25,10 @@ if __name__ == "__main__":
             else:
                 print("⏸️ No valid signal. Waiting...")
 
-            time.sleep(INTERVAL * 60)
-            except Exception as e:
-    import traceback
-    traceback.print_exc()
-    print(f"❌ Error: {e}")
-    time.sleep(60)
+            time.sleep(INTERVAL * 60)  # 每 INTERVAL 分钟运行一次
 
-
-        
-
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print(f"❌ Error: {e}")
+            time.sleep(60)  # 错误后等待1分钟再尝试
