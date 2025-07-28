@@ -1,5 +1,5 @@
 import time
-from strategy import MovingAverageStrategy  # 使用你刚刚上传的策略
+from moving_average_strategy import MovingAverageStrategy
 from trader import AlpacaTrader
 from config import SYMBOL, INTERVAL
 
