@@ -27,10 +27,12 @@ if __name__ == "__main__":
                 print("⏸️ No valid signal. Waiting...")
 
             time.sleep(INTERVAL * 60)
-
-        except Exception as e:
+            except Exception as e:
     import traceback
     traceback.print_exc()
     print(f"❌ Error: {e}")
     time.sleep(60)
+
+
+        
 
