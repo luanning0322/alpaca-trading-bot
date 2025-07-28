@@ -40,4 +40,4 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"❌ Error: {e}")
         
-        time.sleep(60)  # 每 60 秒循环一次
+        time.sleep(10)  # 每 60 秒循环一次
