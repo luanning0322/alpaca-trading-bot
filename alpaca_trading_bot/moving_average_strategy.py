@@ -11,33 +11,51 @@ class MovingAverageStrategy:
         url = f"{API_BASE}/v2/stocks/{SYMBOL}/bars?timeframe={INTERVAL}&limit={self.long_window}"
         print(f"📡 请求地址: {url}")  # 打印请求URL
 
-        response = requests.get(url, headers=ALPACA_HEADERS)
+        try:
+            response = requests.get(url, headers=ALPACA_HEADERS, timeout=10)
+            response.raise_for_status()
+        except requests.exceptions.Timeout:
+            print("⏱ 请求超时，请检查网络或API状态")
+            raise
+        except requests.exceptions.RequestException as e:
+            print(f"❌ 请求异常: {e}")
+            raise
 
-        # 如果请求失败，打印错误信息并抛出异常
-        if response.status_code != 200:
-            print(f"❌ 请求失败: {response.status_code}")
-            print(f"❗ 返回内容: {response.text}")
-            raise Exception("获取K线数据失败")
-
-        data = response.json().get("bars", [])
+        try:
+            data = response.json().get("bars", [])
+        except ValueError:
+            print("❗ 无法解析JSON响应")
+            raise
 
         if not data:
-            print("⚠️ API成功响应，但返回数据为空")
+            print("⚠️ API响应成功但没有K线数据")
             raise Exception("K线数据为空，无法生成信号")
 
         df = pd.DataFrame(data)
+        if "c" not in df.columns:
+            print("❌ 数据中缺少收盘价字段 'c'")
+            raise Exception("无效的K线结构")
+
         df["close"] = df["c"]
         return df
 
     def check_signal(self):
-        df = self.get_price_data()
+        print("🔁 正在检查交易信号...")  # 心跳日志
+        try:
+            df = self.get_price_data()
+            df["short_ma"] = df["close"].rolling(window=self.short_window).mean()
+            df["long_ma"] = df["close"].rolling(window=self.long_window).mean()
 
-        df["short_ma"] = df["close"].rolling(window=self.short_window).mean()
-        df["long_ma"] = df["close"].rolling(window=self.long_window).mean()
+            if df["short_ma"].iloc[-2] < df["long_ma"].iloc[-2] and df["short_ma"].iloc[-1] > df["long_ma"].iloc[-1]:
+                print("📈 收到信号：买入（BUY）")
+                return "buy"
+            elif df["short_ma"].iloc[-2] > df["long_ma"].iloc[-2] and df["short_ma"].iloc[-1] < df["long_ma"].iloc[-1]:
+                print("📉 收到信号：卖出（SELL）")
+                return "sell"
+            else:
+                print("⏸ 收到信号：保持（HOLD）")
+                return "hold"
 
-        if df["short_ma"].iloc[-2] < df["long_ma"].iloc[-2] and df["short_ma"].iloc[-1] > df["long_ma"].iloc[-1]:
-            return "buy"
-        elif df["short_ma"].iloc[-2] > df["long_ma"].iloc[-2] and df["short_ma"].iloc[-1] < df["long_ma"].iloc[-1]:
-            return "sell"
-        else:
+        except Exception as e:
+            print(f"🚨 策略执行异常：{e}")
             return "hold"
