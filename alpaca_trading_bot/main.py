@@ -1,3 +1,5 @@
+# main.py
+
 import time
 from moving_average_strategy import MovingAverageStrategy
 from trader import AlpacaTrader
@@ -25,7 +27,7 @@ if __name__ == "__main__":
             else:
                 print("⏸️ No valid signal. Waiting...")
 
-            time.sleep(SLEEP_INTERVAL)  # 使用整数秒数等待
+            time.sleep(SLEEP_INTERVAL)
 
         except Exception as e:
             print(f"❌ Error: {e}")
