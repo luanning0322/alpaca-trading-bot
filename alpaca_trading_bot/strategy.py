@@ -1,31 +1,28 @@
-from datetime import datetime, timedelta
 import requests
-from config import ALPACA_HEADERS, API_BASE, TIMEZONE
-import pytz
+import pandas as pd
+from config import API_BASE, ALPACA_HEADERS, SYMBOL, INTERVAL
 
-class BreakoutStrategy:
-    def __init__(self, symbol, interval="1D"):
-        self.symbol = symbol
-        self.interval = interval
+class MovingAverageStrategy:
+    def __init__(self, short_window=5, long_window=20):
+        self.short_window = short_window
+        self.long_window = long_window
 
-    def get_recent_bars(self, limit=3):
-        url = f"{API_BASE}/v2/stocks/{self.symbol}/bars?timeframe={self.interval}&limit={limit}"
+    def get_price_data(self):
+        url = f"{API_BASE}/v2/stocks/{SYMBOL}/bars?timeframe={INTERVAL}&limit={self.long_window}"
         response = requests.get(url, headers=ALPACA_HEADERS)
-        response.raise_for_status()
-        bars = response.json()["bars"]
-        return bars
+        data = response.json()["bars"]
+        df = pd.DataFrame(data)
+        df["close"] = df["c"]
+        return df
 
     def check_signal(self):
-        bars = self.get_recent_bars()
-        if len(bars) < 3:
-            return None
+        df = self.get_price_data()
+        df["short_ma"] = df["close"].rolling(window=self.short_window).mean()
+        df["long_ma"] = df["close"].rolling(window=self.long_window).mean()
 
-        prev_high = bars[-2]["h"]
-        prev_low = bars[-2]["l"]
-        curr_close = bars[-1]["c"]
-
-        if curr_close > prev_high:
+        if df["short_ma"].iloc[-2] < df["long_ma"].iloc[-2] and df["short_ma"].iloc[-1] > df["long_ma"].iloc[-1]:
             return "buy"
-        elif curr_close < prev_low:
+        elif df["short_ma"].iloc[-2] > df["long_ma"].iloc[-2] and df["short_ma"].iloc[-1] < df["long_ma"].iloc[-1]:
             return "sell"
-        return None
+        else:
+            return "hold"
