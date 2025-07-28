@@ -9,7 +9,7 @@ class AlpacaTrader:
             "qty": qty,
             "side": side,
             "type": "market",
-            "time_in_force": "gtc"
+            "time_in_force": "day"
         }
         response = requests.post(url, headers=ALPACA_HEADERS, json=data)
         response.raise_for_status()
