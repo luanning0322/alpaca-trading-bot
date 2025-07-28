@@ -2,7 +2,7 @@
 
 ALPACA_API_KEY = "AKRSPYRQKUINR3XBZ3ER"
 ALPACA_SECRET_KEY = "j7XT3cVvrvbcq1VSXZVFodiI87sxYNr0lcNvWWCs"
-API_BASE = "https://api.alpaca.markets"
+API_BASE = "https://data.alpaca.markets"
 TIMEZONE = "America/New_York"
 
 SYMBOL = "AAPL"
