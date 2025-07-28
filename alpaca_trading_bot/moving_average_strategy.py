@@ -1,3 +1,5 @@
+# moving_average_strategy.py
+
 import requests
 import pandas as pd
 from config import API_BASE, ALPACA_HEADERS, SYMBOL, INTERVAL
