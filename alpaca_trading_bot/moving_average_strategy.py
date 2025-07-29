@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from config import API_BASE, ALPACA_HEADERS, SYMBOL, INTERVAL
+from config import DATA_API_BASE, ALPACA_HEADERS, SYMBOL, INTERVAL
 
 class MovingAverageStrategy:
     def __init__(self, short_window=5, long_window=20):
@@ -8,7 +8,7 @@ class MovingAverageStrategy:
         self.long_window = long_window
 
     def get_price_data(self):
-        url = f"{API_BASE}/v2/stocks/{SYMBOL}/bars?timeframe={INTERVAL}&limit={self.long_window}"
+        url = f"{DATA_API_BASE}/v2/stocks/{SYMBOL}/bars?timeframe={INTERVAL}&limit={self.long_window}"
         print(f"📡 请求地址: {url}")  # 打印请求URL
 
         try:
@@ -46,6 +46,7 @@ class MovingAverageStrategy:
             df["short_ma"] = df["close"].rolling(window=self.short_window).mean()
             df["long_ma"] = df["close"].rolling(window=self.long_window).mean()
 
+            # 改进策略：当短期均线刚刚上穿/下穿长期均线或当前偏离超过一定比例则发出交易信号
             if df["short_ma"].iloc[-2] < df["long_ma"].iloc[-2] and df["short_ma"].iloc[-1] > df["long_ma"].iloc[-1]:
                 print("📈 收到信号：买入（BUY）")
                 return "buy"
@@ -53,6 +54,15 @@ class MovingAverageStrategy:
                 print("📉 收到信号：卖出（SELL）")
                 return "sell"
             else:
+                # 增加强信号判定：当前偏离阈值（例如0.5%）
+                latest_short = df["short_ma"].iloc[-1]
+                latest_long = df["long_ma"].iloc[-1]
+                if (latest_short - latest_long) / latest_long > 0.005:
+                    print("📈 偏离增强信号：强买入（BUY）")
+                    return "buy"
+                elif (latest_long - latest_short) / latest_long > 0.005:
+                    print("📉 偏离增强信号：强卖出（SELL）")
+                    return "sell"
                 print("⏸ 收到信号：保持（HOLD）")
                 return "hold"
 
