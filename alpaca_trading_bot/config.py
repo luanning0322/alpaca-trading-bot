@@ -6,7 +6,7 @@ API_BASE = "https://data.alpaca.markets"
 TIMEZONE = "America/New_York"
 
 SYMBOL = "NVDA"
-INTERVAL = "1Min"        # 用于 API 请求
+INTERVAL = "5Min"        # 用于 API 请求
 SLEEP_INTERVAL = 60      # 用于轮询等待（单位：秒）
 
 ALPACA_HEADERS = {
